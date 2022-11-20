@@ -1,0 +1,13 @@
+{
+"language":"العربية",
+"@language":{
+"description": "اللغة الحالية"
+},
+"helloWorld":"مرحبا بالعالم!",
+"@helloWorld":{
+"description": "تحية مبرمج"
+},
+"workoutScreen":"التدريب",
+"workoutListScreen":"قائمة التدريبات",
+"selectWorkout":"اختر التدريب"
+}

@@ -1,0 +1,46 @@
+{
+  "project_info": {
+    "project_number": "409733437252",
+    "project_id": "magic-task-ae057",
+    "storage_bucket": "magic-task-ae057.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:409733437252:android:7d08796b23616ea9af2911",
+        "android_client_info": {
+          "package_name": "com.programmer98.magic_task"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "409733437252-vqbtjh5eu8g95u3v9pnmi60h0tdfulrt.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDSEcXlyILcYh__XSWuuFs36-t1MGhzLgQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "409733437252-vqbtjh5eu8g95u3v9pnmi60h0tdfulrt.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "409733437252-she7qpdiv0puq5a9fumrts0l67psp8rc.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.programmer98.magicTask"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

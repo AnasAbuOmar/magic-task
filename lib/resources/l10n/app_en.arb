@@ -1,0 +1,13 @@
+{
+"language":"English",
+"@language":{
+"description": "The current language"
+},
+"helloWorld":"Hello world!",
+"@helloWorld":{
+"description": "A programmer greeting"
+},
+"workoutScreen":"Workout",
+"workoutListScreen":"Workout list",
+"selectWorkout":"Select workout"
+}
