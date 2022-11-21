@@ -26,18 +26,28 @@ class WorkoutService {
     }
   }
 
-  Future<void> updateWorkout({required WorkoutModel workoutModel}) async {
-    Uuid id = const Uuid();
-    String workoutId = id.v1();
-    await FirestoreStorage.firestore
-        .collection(collectionName)
-        .doc(workoutId)
-        .update({
-      'workoutId': workoutId,
-      'workoutName': workoutModel.workoutName,
-      'numberOfSets': workoutModel.numberOfSets,
-    });
+  Future<String> updateWorkout(
+      {required WorkoutModel workoutModel, required String workoutId}) async {
+    try {
+      await FirestoreStorage.firestore
+          .collection(collectionName)
+          .doc(workoutId)
+          .update({
+        'workoutId': workoutId,
+        'workoutName': workoutModel.workoutName,
+        'numberOfSets': workoutModel.numberOfSets,
+      });
+      return workoutId;
+    } catch (e) {
+      return '';
+    }
   }
+
+  Future<void> removeWorkoutId({required String workoutId}) async =>
+      await FirestoreStorage.firestore
+          .collection(collectionName)
+          .doc(workoutId)
+          .delete();
 }
 
 const String collectionName = 'workout';

@@ -15,7 +15,8 @@ class WorkoutCubit extends Cubit<WorkoutState> {
 
   static WorkoutCubit get(context) => BlocProvider.of(context);
 
-  final ScrollController scrollController = ScrollController();
+  ScrollController scrollControllerCreate = ScrollController();
+  ScrollController scrollControllerEditPage = ScrollController();
 
   void createWorkout() {
     emit(state.copyWith(status: WorkoutStateStatus.loading));
@@ -36,6 +37,7 @@ class WorkoutCubit extends Cubit<WorkoutState> {
         }
         for (var element in oldSetList) {
           SetsModel setsModel = SetsModel(
+              setsId: element.setsId,
               workoutId: workoutId,
               numberOfRepetitions: element.numberOfRepetitions,
               weight: element.weight);
@@ -45,26 +47,106 @@ class WorkoutCubit extends Cubit<WorkoutState> {
         emit(state.copyWith(setsOfWorkoutList: newSetList));
         SetsService setsService = SetsService();
         for (var element in state.setsOfWorkoutList) {
-          setsService.createWorkout(setsModel: element);
+          setsService.createSet(setsModel: element);
         }
 
         emit(state.copyWith(status: WorkoutStateStatus.success));
       } else {
         emit(state.copyWith(status: WorkoutStateStatus.error));
       }
-    });
+    }).whenComplete(() => reset());
+
     emit(state.copyWith(status: WorkoutStateStatus.loading));
+  }
+
+  void updateWorkout({required String workoutId}) {
+    emit(state.copyWith(status: WorkoutStateStatus.loading));
+    WorkoutService service = WorkoutService();
+
+    service
+        .updateWorkout(
+            workoutId: workoutId,
+            workoutModel: WorkoutModel(
+              workoutName: state.dropdownWorkoutName,
+              numberOfSets: state.setsOfWorkoutList.length,
+            ))
+        .then((workoutId) {
+      if (workoutId != '') {
+        List<SetsModel> oldSetList = [];
+        List<SetsModel> newSetList = [];
+        for (var element in state.setsOfWorkoutList) {
+          oldSetList.add(element);
+        }
+        for (var element in oldSetList) {
+          SetsModel setsModel = SetsModel(
+              setsId: element.setsId,
+              workoutId: workoutId,
+              numberOfRepetitions: element.numberOfRepetitions,
+              weight: element.weight);
+
+          newSetList.add(setsModel);
+        }
+
+        emit(state.copyWith(setsOfWorkoutList: newSetList));
+
+        removeSetBySetId(workoutId: state.selectedWorkoutId).then((value) {
+          SetsService setsService = SetsService();
+          for (var element in state.setsOfWorkoutList) {
+            setsService.createSet(setsModel: element);
+          }
+        });
+
+        emit(state.copyWith(status: WorkoutStateStatus.success));
+      } else {
+        emit(state.copyWith(status: WorkoutStateStatus.error));
+      }
+    });
+
+    emit(state.copyWith(status: WorkoutStateStatus.loading));
+  }
+
+  Future<void> removeSetBySetId({required String workoutId}) async {
+    SetsService setsService = SetsService();
+    await setsService.sets.get().then((querySnapshot) {
+      for (var element in querySnapshot.docs) {
+        if (element.get('workoutId') == workoutId) {
+          setsService.removeSet(setsId: element.get('setsId'));
+        }
+      }
+    });
+  }
+
+  void removeWorkoutByWorkoutId({required String workoutId}) {
+    WorkoutService workoutService = WorkoutService();
+    workoutService.removeWorkoutId(workoutId: workoutId);
   }
 
   void selectWorkout({required String newWorkout}) => emit(state.copyWith(
         dropdownWorkoutName: newWorkout,
       ));
 
-  void scrollDown() => Future.delayed(
-        const Duration(milliseconds: 500),
-        () => scrollController.animateTo(
-            scrollController.position.maxScrollExtent,
-            duration: const Duration(seconds: 1),
+  void selectWorkoutId({required String selectedWorkoutId}) =>
+      emit(state.copyWith(
+        selectedWorkoutId: selectedWorkoutId,
+      ));
+
+  void scrollDownCreatePage() => Future.delayed(
+        const Duration(milliseconds: 200),
+        () => scrollControllerCreate.animateTo(
+            scrollControllerCreate.position.maxScrollExtent,
+            duration: const Duration(
+              milliseconds: 500,
+            ),
+            curve: Curves.fastLinearToSlowEaseIn),
+      );
+
+  void scrollDownEditPage() => Future.delayed(
+        const Duration(milliseconds: 200),
+        () => scrollControllerEditPage.animateTo(
+            scrollControllerEditPage.position.maxScrollExtent,
+            duration: const Duration(
+              milliseconds: 500,
+            ),
             curve: Curves.fastLinearToSlowEaseIn),
       );
 
@@ -79,7 +161,7 @@ class WorkoutCubit extends Cubit<WorkoutState> {
     emit(state.copyWith(selectedGif: map));
   }
 
-  void addSets({required SetsModel setsModel}) {
+  void addSets({required SetsModel setsModel, required WorkoutPageMode mode}) {
     List<SetsModel> oldSetList = [];
     for (var element in state.setsOfWorkoutList) {
       oldSetList.add(element);
@@ -87,7 +169,24 @@ class WorkoutCubit extends Cubit<WorkoutState> {
     oldSetList.add(setsModel);
 
     emit(state.copyWith(setsOfWorkoutList: oldSetList));
-    scrollDown();
+    switch (mode) {
+      case WorkoutPageMode.create:
+        scrollDownCreatePage();
+        break;
+      case WorkoutPageMode.edit:
+        scrollDownEditPage();
+        break;
+    }
+  }
+
+  void removeSets() {
+    List<SetsModel> oldSetList = [];
+    for (var element in state.setsOfWorkoutList) {
+      oldSetList.add(element);
+    }
+    oldSetList.removeLast();
+
+    emit(state.copyWith(setsOfWorkoutList: oldSetList));
   }
 
   void updateSets({required SetsModel setsModel, required int index}) {
@@ -99,29 +198,13 @@ class WorkoutCubit extends Cubit<WorkoutState> {
     emit(state.copyWith(setsOfWorkoutList: oldSetList));
   }
 
-  void removeSetsAt({required int index}) {
-    List<SetsModel> oldSetList = [];
-    for (var element in state.setsOfWorkoutList) {
-      oldSetList.add(element);
-    }
-    oldSetList.removeAt(index);
-    emit(state.copyWith(setsOfWorkoutList: oldSetList));
-  }
-
   void reset() {
     emit(state.copyWith(
       status: WorkoutStateStatus.init,
       dropdownWorkoutName: AppConstants.barbellRow,
       weight: 5,
       numberOfRepetitions: 2,
-      selectedGif: const {AppConstants.barbellRow: Images.barbellRow},
       setsOfWorkoutList: const [],
     ));
-    /*    this.status = WorkoutStateStatus.init,
-    this.dropdownWorkoutName = AppConstants.barbellRow,
-    this.weight = 5,
-    this.numberOfRepetitions = 2,
-    this.selectedGif = const {AppConstants.barbellRow: Images.barbellRow},
-    this.setsOfWorkoutList = const [],*/
   }
 }

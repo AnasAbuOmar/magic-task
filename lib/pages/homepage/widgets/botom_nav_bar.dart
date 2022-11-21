@@ -49,6 +49,7 @@ class BottomNavBar extends StatelessWidget {
           selectedIndex: state.bottomNavBarIndex,
           onDestinationSelected: (int newIndex) {
             cubit.changeBottomNavBarIndex(newIndex: newIndex);
+            WorkoutCubit.get(context).reset();
           },
           destinations: destinations,
         ),

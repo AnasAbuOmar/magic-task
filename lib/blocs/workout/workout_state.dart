@@ -6,8 +6,7 @@ enum WorkoutPageMode { create, edit }
 
 class WorkoutState extends Equatable {
   final WorkoutStateStatus status;
-
-  // final int numberOfSets;
+  final String selectedWorkoutId;
   final String dropdownWorkoutName;
   final double weight;
   final int numberOfRepetitions;
@@ -24,6 +23,7 @@ class WorkoutState extends Equatable {
 
   const WorkoutState({
     this.status = WorkoutStateStatus.init,
+    this.selectedWorkoutId = '',
     this.dropdownWorkoutName = AppConstants.barbellRow,
     this.weight = 5,
     this.numberOfRepetitions = 2,
@@ -34,6 +34,7 @@ class WorkoutState extends Equatable {
   @override
   List<Object> get props => [
         status,
+        selectedWorkoutId,
         dropdownWorkoutName,
         weight,
         numberOfRepetitions,
@@ -43,6 +44,7 @@ class WorkoutState extends Equatable {
 
   WorkoutState copyWith({
     WorkoutStateStatus? status,
+    String? selectedWorkoutId,
     String? dropdownWorkoutName,
     double? weight,
     int? numberOfRepetitions,
@@ -51,6 +53,7 @@ class WorkoutState extends Equatable {
   }) {
     return WorkoutState(
       status: status ?? this.status,
+      selectedWorkoutId: selectedWorkoutId ?? this.selectedWorkoutId,
       dropdownWorkoutName: dropdownWorkoutName ?? this.dropdownWorkoutName,
       weight: weight ?? this.weight,
       numberOfRepetitions: numberOfRepetitions ?? this.numberOfRepetitions,

@@ -34,7 +34,7 @@ class WorkoutListView extends StatelessWidget {
                                     width: 60.sp,
                                     child: Center(
                                         child: Text(
-                                          '${snapshot.data!.docs.indexOf(doc) + 2}',
+                                      '${snapshot.data!.docs.indexOf(doc) + 2}',
                                       style: Theme.of(context)
                                           .textTheme
                                           .bodyText2
@@ -58,6 +58,11 @@ class WorkoutListView extends StatelessWidget {
                                               color:
                                                   blackColor.withOpacity(0.5),
                                               fontSize: 20.sp)),
+                                  trailing: IconButton(
+                                      onPressed: () => WorkoutCubit.get(context)
+                                          .removeWorkoutByWorkoutId(
+                                              workoutId: doc['workoutId']),
+                                      icon: const Icon(Icons.delete)),
                                 ),
                               ))
                           .toList()),
