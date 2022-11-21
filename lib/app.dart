@@ -7,22 +7,17 @@ class MagicTaskApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
-      child: ThemeProvider(
-        initTheme: lightTheme,
-        builder: (_, myTheme) {
-          return BlocBuilder<AppCubit, AppState>(builder: (context, state) {
-            return MaterialApp(
-              debugShowCheckedModeBanner: false,
-              theme: myTheme,
-              supportedLocales: AppLocalizations.supportedLocales,
-              localizationsDelegates: AppLocalizations.localizationsDelegates,
-              locale: state.locale,
-              title: AppConstants.appName,
-              home: const Root(),
-            );
-          });
-        },
-      ),
+      child: BlocBuilder<AppCubit, AppState>(builder: (context, state) {
+        return MaterialApp(
+          debugShowCheckedModeBanner: false,
+          theme: lightTheme,
+          supportedLocales: AppLocalizations.supportedLocales,
+          localizationsDelegates: AppLocalizations.localizationsDelegates,
+          locale: state.locale,
+          title: AppConstants.appName,
+          home: const Root(),
+        );
+      }),
     );
   }
 }

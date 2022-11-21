@@ -1,7 +1,6 @@
 export 'package:flutter_native_splash/flutter_native_splash.dart';
 export 'package:magic_task/app.dart';
 export 'package:local_storage/local_storage.dart';
- export 'package:animated_theme_switcher/animated_theme_switcher.dart';
 export 'package:flutter/scheduler.dart' show timeDilation;
 export 'package:magic_task/utils/assets/images.dart';
 export 'package:flutter_screenutil/flutter_screenutil.dart';
